@@ -26,6 +26,16 @@ class Extractor:
                     classmate["info"] += " " + line
         self.classmates.append(classmate)
 
+    def writeCSV(self):
+        fn = "./classmates.csv"
+        with open(fn, 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['name', 'email', 'phone', 'info']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for classmate in self.classmates:
+                writer.writerow(classmate)
+        log(f"Wrote {len(self.classmates)} classmates to {fn}")
+
     def main(self):
         fn = "./classmates.txt"
         with open(fn, 'r', encoding='utf-8') as f:
@@ -41,6 +51,7 @@ class Extractor:
                 else:
                     cmLines.append(line)
         log(f"classmates found: {len(self.classmates)}")
+        self.writeCSV()
 
 if '__main__' == __name__:
     Extractor().main()
