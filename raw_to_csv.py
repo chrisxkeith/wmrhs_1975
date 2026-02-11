@@ -13,7 +13,20 @@ class Extractor:
    
     def addClassmate(self, lines):
         classmate = {}
-        classmate["name"] = lines[0]
+        substr = lines[0].split()
+        if len(substr) > 1:
+            classmate["lastname"] = substr[len(substr)-1]
+            classmate["firstname"] = ' '.join(substr[0:len(substr)-1])
+        else:
+            classmate["lastname"] = substr[0]
+        if classmate["lastname"] == "deceased":
+            classmate["info"] = "deceased"
+            classmate["lastname"] = substr[1]
+            classmate["firstname"] = substr[0]
+        if classmate["lastname"] == "Returned":
+            classmate["info"] = "Returned"
+            classmate["lastname"] = substr[1]
+            classmate["firstname"] = substr[0]
         for line in lines[1:]:
             if re.match(r'^\S+@\S+\.\S+$', line):
                 classmate["email"] = line
@@ -29,7 +42,7 @@ class Extractor:
     def writeCSV(self):
         fn = "./classmates.csv"
         with open(fn, 'w', newline='', encoding='utf-8') as csvfile:
-            fieldnames = ['name', 'email', 'phone', 'info']
+            fieldnames = ['lastname', 'firstname', 'email', 'phone', 'info']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
             for classmate in self.classmates:
